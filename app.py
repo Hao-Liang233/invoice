@@ -22,7 +22,7 @@ line_bot_api = LineBotApi('OD5nHxJkXc8a/H0hSN2th2ZSVwP3bX96SYAWinqA2Pe2AR6Q8gQ8D
 # Channel Secret
 handler = WebhookHandler('6cd1ec3841120b5fbda2e33049e672b9')
 
-def inv():
+def inv(f):
     try:
         import xml.etree.cElementTree as ET
     except ImportError:
@@ -31,7 +31,20 @@ def inv():
     content=requests.get("http://invoice.etax.nat.gov.tw/invoice.xml")
     tree=ET.fromstring(content.text)
     items=list(tree.iter(tag="item"))
-    return items
+    if f:
+        title=items[0][0].text
+        ptext=items[0][2].text
+        ptext=ptext.replace("<p>","").replace("</p>","\n")
+        return title+"月\n"+ptext[:-1]
+    else:
+        message=""
+        for i in range(1,3):
+            title=items[i][0].text
+            ptext=items[i][2].text
+            ptext=ptext.replace("<p>","").replace("</p>","\n")
+            message=message+title+"月\n"+ptext+"\n"
+        return message[:-2]
+
 
 # 監聽所有來自 /callback 的 Post Request
 @app.route("/callback", methods=['POST'])
@@ -54,25 +67,64 @@ def handle_message(event):
     #message = TextSendMessage(text=event.message.text)
     
     if event.message.text == "@本期號碼":
-        items=inv()
-        title=items[0][0].text
-        ptext=items[0][2].text
-        ptext=ptext.replace("<p>","").replace("</p>","\n")
-        message=TextSendMessage(title+"月\n"+ptext[:-1])
+        message=TextSendMessage(inv(1))
         line_bot_api.reply_message(event.reply_token, message)
         
     if event.message.text == "@前期號碼":
-        items=inv()
-        message=""
-        for i in range(1,3):
-            title=items[i][0].text
-            ptext=items[i][2].text
-            ptext=ptext.replace("<p>","").replace("</p>","\n")
-            message=message+title+"月\n"+ptext+"\n"
-        message=TextSendMessage(message[:-2])
+        message=TextSendMessage(inv(0))
         line_bot_api.reply_message(event.reply_token, message)
     
-
+    if len(event.message.text)==3:
+        n=event.message.text
+        ma=inv(1).split("\n")
+        message="本期；"
+        for i in range(1,5):
+            m=ma[i].split("：")
+            print(m)
+            if i==1:
+                if n in m[1][5:]:
+                    message="可能是特別獎"
+            elif i==2:
+                if n in m[1][5:]:
+                    message="可能是特獎"
+            elif i==3:
+                u=m[1].split("，")
+                for j in u:
+                    if n in j[5:]:
+                        message="可能是頭獎"
+            elif i==4:
+                if n in m[1]:
+                    message="恭喜獲得增開六獎"
+                    
+        if message=="本期；":
+            message+="共辜"
+        message+="\n前期；"
+        ma=inv(0).split("\n")
+        
+        for i in range(1,5):
+            m=ma[i].split("：")
+            print(m)
+            if i==1:
+                if n in m[1][5:]:
+                    message="可能是特別獎"
+            elif i==2:
+                if n in m[1][5:]:
+                    message="可能是特獎"
+            elif i==3:
+                u=m[1].split("，")
+                for j in u:
+                    if n in j[5:]:
+                        message="可能是頭獎"
+            elif i==4:
+                if n in m[1]:
+                    message="恭喜獲得增開六獎"
+                    
+        if message=="前期；":
+            message+="共辜"
+        
+        message=TextSendMessage(message)
+        line_bot_api.reply_message(event.reply_token, message)
+            
 
 import os
 if __name__ == "__main__":
