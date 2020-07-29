@@ -102,26 +102,30 @@ def handle_message(event):
                 message+="共辜"
             message+="\n前期："
             ma=inv(0).split("\n")
-            
+            d=1
             for i in range(1,5):
                 m=ma[i].split("：")
                 print(m)
                 if i==1:
                     if n in m[1][5:]:
                         message+="可能是特別獎"
+                        d=0
                 elif i==2:
                     if n in m[1][5:]:
                         message+="可能是特獎"
+                        d=0
                 elif i==3:
                     u=m[1].split("，")
                     for j in u:
                         if n in j[5:]:
                             message+="可能是頭獎"
+                            d=0
                 elif i==4:
                     if n in m[1]:
                         message+="恭喜獲得增開六獎"
+                        d=0
                         
-            if message=="前期：":
+            if d:
                 message+="共辜"
         except:
             print()
