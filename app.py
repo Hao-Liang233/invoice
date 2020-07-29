@@ -76,51 +76,56 @@ def handle_message(event):
     
     if len(event.message.text)==3:
         n=event.message.text
-        ma=inv(1).split("\n")
-        message="本期："
-        for i in range(1,5):
-            m=ma[i].split("：")
-            print(m)
-            if i==1:
-                if n in m[1][5:]:
-                    message+="可能是特別獎"
-            elif i==2:
-                if n in m[1][5:]:
-                    message+="可能是特獎"
-            elif i==3:
-                u=m[1].split("，")
-                for j in u:
-                    if n in j[5:]:
-                        message+="可能是頭獎"
-            elif i==4:
-                if n in m[1]:
-                    message+="恭喜獲得增開六獎"
-                    
-        if message=="本期：":
-            message+="共辜"
-        message+="\n前期："
-        ma=inv(0).split("\n")
+        try:
+            l=int(n)
+            ma=inv(1).split("\n")
+            message="本期："
+            for i in range(1,5):
+                m=ma[i].split("：")
+                print(m)
+                if i==1:
+                    if n in m[1][5:]:
+                        message+="可能是特別獎"
+                elif i==2:
+                    if n in m[1][5:]:
+                        message+="可能是特獎"
+                elif i==3:
+                    u=m[1].split("，")
+                    for j in u:
+                        if n in j[5:]:
+                            message+="可能是頭獎"
+                elif i==4:
+                    if n in m[1]:
+                        message+="恭喜獲得增開六獎"
+                        
+            if message=="本期：":
+                message+="共辜"
+            message+="\n前期："
+            ma=inv(0).split("\n")
+            
+            for i in range(1,5):
+                m=ma[i].split("：")
+                print(m)
+                if i==1:
+                    if n in m[1][5:]:
+                        message+="可能是特別獎"
+                elif i==2:
+                    if n in m[1][5:]:
+                        message+="可能是特獎"
+                elif i==3:
+                    u=m[1].split("，")
+                    for j in u:
+                        if n in j[5:]:
+                            message+="可能是頭獎"
+                elif i==4:
+                    if n in m[1]:
+                        message+="恭喜獲得增開六獎"
+                        
+            if message=="前期：":
+                message+="共辜"
+        except:
+            print()
         
-        for i in range(1,5):
-            m=ma[i].split("：")
-            print(m)
-            if i==1:
-                if n in m[1][5:]:
-                    message+="可能是特別獎"
-            elif i==2:
-                if n in m[1][5:]:
-                    message+="可能是特獎"
-            elif i==3:
-                u=m[1].split("，")
-                for j in u:
-                    if n in j[5:]:
-                        message+="可能是頭獎"
-            elif i==4:
-                if n in m[1]:
-                    message+="恭喜獲得增開六獎"
-                    
-        if message=="前期：":
-            message+="共辜"
         
         message=TextSendMessage(message)
         line_bot_api.reply_message(event.reply_token, message)
