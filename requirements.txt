@@ -1,6 +1,6 @@
 line-bot-sdk
 flask
-requests==2.22.0
+requests==2.31.0
 beautifulsoup4==4.8.2
 urllib3  
 opencv-python-headless
